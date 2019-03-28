@@ -10,16 +10,19 @@
     <name>event-sourcing/inventory-service</name>
 
     <parent>
-        <groupId>org.kbastani</groupId>
-        <artifactId>event-sourcing</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
-        <relativePath>../</relativePath>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>1.3.3.RELEASE</version>
+        <relativePath/>
     </parent>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
         <spring-data-neo4j.version>4.0.0.RELEASE</spring-data-neo4j.version>
+        <docker.image.prefix>index.tenxcloud.com/system_containers</docker.image.prefix>
+        <docker.image.tag>0.0.1</docker.image.tag>
+        <docker.plugin.version>0.4.13</docker.plugin.version>
     </properties>
 
     <dependencies>
@@ -55,7 +58,17 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>Camden.SR7</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <build>
         <plugins>
             <plugin>
@@ -68,14 +81,22 @@
                 <version>${docker.plugin.version}</version>
                 <executions>
                     <execution>
-                        <phase>install</phase>
+                        <id>build-image</id>
+                        <phase>package</phase>
                         <goals>
                             <goal>build</goal>
                         </goals>
                     </execution>
+                    <execution>
+                        <id>push-image</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>push</goal>
+                        </goals>
+                    </execution>
                 </executions>
                 <configuration>
-                    <imageName>${docker.image.prefix}/${project.artifactId}</imageName>
+                    <imageName>${docker.image.prefix}/${project.artifactId}:${docker.image.tag}</imageName>
                     <dockerDirectory>${project.basedir}/src/main/docker</dockerDirectory>
                     <resources>
                         <resource>
