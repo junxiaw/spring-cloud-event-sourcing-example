@@ -80,13 +80,6 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>repackage</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>com.spotify</groupId>
@@ -94,14 +87,22 @@
                 <version>${docker.plugin.version}</version>
                 <executions>
                     <execution>
-                        <phase>install</phase>
+                        <id>build-image</id>
+                        <phase>package</phase>
                         <goals>
                             <goal>build</goal>
                         </goals>
                     </execution>
+                    <execution>
+                        <id>push-image</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>push</goal>
+                        </goals>
+                    </execution>
                 </executions>
                 <configuration>
-                    <imageName>${docker.image.prefix}/${project.artifactId}</imageName>
+                    <imageName>${docker.image.prefix}/${project.artifactId}:${docker.image.tag}</imageName>
                     <dockerDirectory>${project.basedir}/src/main/docker</dockerDirectory>
                     <resources>
                         <resource>

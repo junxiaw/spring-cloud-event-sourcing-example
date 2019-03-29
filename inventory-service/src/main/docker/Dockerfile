@@ -2,9 +2,10 @@ FROM 192.168.1.52/tenx_containers/oraclejdk:8u151
 
 
 ENV PROFILE       development
-ENV eureka_host   spring-cloud-discovery
+ENV EUREKA_HOST   spring-cloud-discovery
 ENV REDIS_HOST    spring-cloud-redis
 ENV NEO4J_HOST    spring-cloud-neo4j
+ENV NEO4J_USERNAME    neo4j
 ENV NEO4J_PASSWORD    tenxcloud
 WORKDIR "/app"
 VOLUME /tmp
@@ -16,8 +17,9 @@ CMD ["java", "-Xms256m", "-Xmx1g", \
      "-XX:+UseCGroupMemoryLimitForHeap", \
      "-Dspring.profiles.active=${PROFILE}", \
      "-Dspring.config.location=/app/config", \
-     "-Deureka.host${eureka_host}", \
+     "-Deureka.host${EUREKA_HOST}", \
      "-Dredis.host=${REDIS_HOST}", \
      "-Dneo4j.host=${NEO4J_HOST}", \
+     "-Dneo4j.username=${NEO4J_USERNAME}", \
      "-Dneo4j.password=${NEO4J_PASSWORD}", \
      "-jar", "/app/app.jar"]
